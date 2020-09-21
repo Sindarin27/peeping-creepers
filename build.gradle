@@ -1,9 +1,9 @@
 buildscript {
     repositories {
         maven { url = 'https://files.minecraftforge.net/maven' }
-        maven { url='https://dist.creeper.host/Sponge/maven' }
         jcenter()
         mavenCentral()
+        maven { url='https://dist.creeper.host/Sponge/maven' }
     }
     dependencies {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
@@ -14,7 +14,6 @@ apply plugin: 'net.minecraftforge.gradle'
 // Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
-apply plugin: 'org.spongepowered.mixin'
 
 version = '1.0'
 group = 'com.sindarin.peepingcreepers' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
@@ -95,7 +94,7 @@ dependencies {
     // that the dep is a ForgeGradle 'patcher' dependency. And it's patches will be applied.
     // The userdev artifact is a special name and will get all sorts of transformations applied to it.
     minecraft 'net.minecraftforge:forge:1.16.1-32.0.108'
-
+    compile 'org.spongepowered:mixin:0.8'
     // You may put jars on which you depend on in ./libs or you may define them like so..
     // compile "some.group:artifact:version:classifier"
     // compile "some.group:artifact:version"
@@ -120,14 +119,8 @@ dependencies {
 jar {
     manifest {
         attributes([
-            "Specification-Title": "examplemod",
-            "Specification-Vendor": "examplemodsareus",
-            "Specification-Version": "1", // We are version 1 of ourselves
-            "Implementation-Title": project.name,
-            "Implementation-Version": "${version}",
-            "Implementation-Vendor" :"examplemodsareus",
-            "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
-            "MixinConfigs": "peepingcreepers.mixins.json"
+            "MixinConfigs": "peepingcreepers.mixins.json",
+            "MixinConnector": "sindarin.peepingcreepers.mixin.MixinLoader"
         ])
     }
 }
@@ -150,6 +143,8 @@ publishing {
         }
     }
 }
+
+apply plugin: 'org.spongepowered.mixin'
 
 mixin {
     add sourceSets.main, "peepingcreepers.refmap.json"

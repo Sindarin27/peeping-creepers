@@ -11,11 +11,11 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(CreeperSwellGoal.class)
+@Mixin(value = CreeperSwellGoal.class)
 public class CreeperIgniteMixin {
     @Shadow @Final private CreeperEntity swellingCreeper;
 
-    @Inject(at=@At("RETURN"), method="shouldExecute", cancellable = true)
+    @Inject(at=@At("RETURN"), method= "shouldExecute()Z", cancellable = true)
     private void onCanStart(CallbackInfoReturnable<Boolean> cir) {
         //If method thinks creeper can start, think again
         if (cir.getReturnValue()) {
