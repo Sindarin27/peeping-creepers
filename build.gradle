@@ -119,8 +119,7 @@ dependencies {
 jar {
     manifest {
         attributes([
-            "MixinConfigs": "peepingcreepers.mixins.json",
-            "MixinConnector": "sindarin.peepingcreepers.mixin.MixinLoader"
+            "MixinConfigs": "peepingcreepers.mixins.json"
         ])
     }
 }

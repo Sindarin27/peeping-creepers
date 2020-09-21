@@ -1,1 +1,0 @@
-MixinConnector: sindarin.peepingcreepers.mixin.MixinLoader
