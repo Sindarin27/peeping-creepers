@@ -4,7 +4,8 @@
   "package": "sindarin.peepingcreepers.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-    "CreeperIgniteMixin"
+    "CreeperIgniteMixin",
+    "CreeperEntityMixin"
   ],
   "client": [
   ],

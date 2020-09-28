@@ -1,6 +1,5 @@
 package sindarin.peepingcreepers.mixin;
 
-import net.minecraft.client.util.math.Vector3d;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.CreeperIgniteGoal;
 import net.minecraft.entity.mob.CreeperEntity;
@@ -10,32 +9,45 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import sindarin.peepingcreepers.Peepingcreepers;
+
+import static sindarin.peepingcreepers.ai.CreeperDecisionHelper.canSee;
+import static sindarin.peepingcreepers.ai.CreeperDecisionHelper.shouldBreach;
 
 @Mixin(CreeperIgniteGoal.class)
 public class CreeperIgniteMixin {
     @Shadow @Final private CreeperEntity creeper;
 
-    @Shadow private LivingEntity target;
-
     @Inject(at=@At("RETURN"), method="canStart", cancellable = true)
     private void onCanStart(CallbackInfoReturnable<Boolean> cir) {
+        CreeperEntity peeper = this.creeper;
+        LivingEntity seer = peeper.getTarget();
+
+        //Always continue when already exploding, but never when no target
+        if (peeper.getFuseSpeed() > 0) {cir.setReturnValue(true); return; }
+        if (seer == null) {cir.setReturnValue(false); return; }
+
         //If method thinks creeper can start, think again
-        if (cir.getReturnValue()) {
-            CreeperEntity peeper = this.creeper;
-            if (peeper.getFuseSpeed() > 0) {cir.setReturnValue(true); return; }
-            LivingEntity seer = peeper.getTarget();
-            if (seer == null) {cir.setReturnValue(false); return; }
-            cir.setReturnValue(canSee(seer, peeper));
+        if (Peepingcreepers.CONFIG.stalking && cir.getReturnValue()) {
+            if (!canSee(seer, peeper)) cir.setReturnValue(false); return;
+        }
+
+        //If method thinks creeper cant start, think again
+        if (Peepingcreepers.CONFIG.breaching && !cir.getReturnValue()) {
+            if (shouldBreach(seer, peeper)) cir.setReturnValue(true); return;
         }
     }
 
-    private boolean canSee(LivingEntity seer, LivingEntity peeper) {
-        Vec3d peeperPos = peeper.getPos();
-        Vec3d vecLook = seer.getRotationVector();
-        Vec3d subtractedReverse = peeperPos.reverseSubtract(seer.getPos()).normalize();
-        subtractedReverse = new Vec3d(subtractedReverse.x, 0, subtractedReverse.z);
-        double dot = subtractedReverse.dotProduct(vecLook);
-        return dot < 0.0;
+    @Inject(at=@At("RETURN"), method="tick", cancellable = true)
+    private void onTick(CallbackInfo ci) {
+        CreeperEntity breacher = this.creeper;
+        LivingEntity target = breacher.getTarget();
+
+        //If creeper should breach, fuse speed should be 1
+        if (target != null && shouldBreach(target, breacher)) {
+            breacher.setFuseSpeed(1);
+        }
     }
 }
