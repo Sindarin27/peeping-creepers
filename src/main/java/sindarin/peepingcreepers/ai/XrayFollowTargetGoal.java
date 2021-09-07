@@ -9,16 +9,16 @@ import java.util.function.Predicate;
 public class XrayFollowTargetGoal<T extends LivingEntity> extends FollowTargetGoal<T> {
     public XrayFollowTargetGoal(MobEntity mob, Class<T> targetClass, boolean checkVisibility) {
         super(mob, targetClass, checkVisibility);
-        this.targetPredicate.includeHidden();
+        this.targetPredicate.ignoreVisibility();
     }
 
     public XrayFollowTargetGoal(MobEntity mob, Class<T> targetClass, boolean checkVisibility, boolean checkCanNavigate) {
         super(mob, targetClass, checkVisibility, checkCanNavigate);
-        this.targetPredicate.includeHidden();
+        this.targetPredicate.ignoreVisibility();
     }
 
     public XrayFollowTargetGoal(MobEntity mob, Class<T> targetClass, int reciprocalChance, boolean checkVisibility, boolean checkCanNavigate, Predicate<net.minecraft.entity.LivingEntity> targetPredicate) {
         super(mob, targetClass, reciprocalChance, checkVisibility, checkCanNavigate, targetPredicate);
-        this.targetPredicate.includeHidden();
+        this.targetPredicate.ignoreVisibility();
     }
 }
