@@ -9,7 +9,7 @@ public class CreeperDecisionHelper {
     public static boolean canSee(LivingEntity seer, LivingEntity peeper) {
         Vec3d peeperPos = peeper.getPos();
         Vec3d vecLook = seer.getRotationVector();
-        Vec3d subtractedReverse = peeperPos.reverseSubtract(seer.getPos()).normalize();
+        Vec3d subtractedReverse = peeperPos.relativize(seer.getPos()).normalize();
         subtractedReverse = new Vec3d(subtractedReverse.x, 0, subtractedReverse.z);
         double dot = subtractedReverse.dotProduct(vecLook);
         return dot < 0.0;
