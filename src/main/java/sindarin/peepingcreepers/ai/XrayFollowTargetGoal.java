@@ -1,12 +1,12 @@
 package sindarin.peepingcreepers.ai;
 
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.ai.goal.FollowTargetGoal;
+import net.minecraft.entity.ai.goal.ActiveTargetGoal;
 import net.minecraft.entity.mob.MobEntity;
 
 import java.util.function.Predicate;
 
-public class XrayFollowTargetGoal<T extends LivingEntity> extends FollowTargetGoal<T> {
+public class XrayFollowTargetGoal<T extends LivingEntity> extends ActiveTargetGoal<T> {
     public XrayFollowTargetGoal(MobEntity mob, Class<T> targetClass, boolean checkVisibility) {
         super(mob, targetClass, checkVisibility);
         this.targetPredicate.ignoreVisibility();
