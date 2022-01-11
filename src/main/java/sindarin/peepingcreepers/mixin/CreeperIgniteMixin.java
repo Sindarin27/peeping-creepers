@@ -3,7 +3,11 @@ package sindarin.peepingcreepers.mixin;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.CreeperIgniteGoal;
 import net.minecraft.entity.mob.CreeperEntity;
+import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -13,8 +17,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import sindarin.peepingcreepers.Peepingcreepers;
 
-import static sindarin.peepingcreepers.ai.CreeperDecisionHelper.canSee;
-import static sindarin.peepingcreepers.ai.CreeperDecisionHelper.shouldBreach;
+import java.util.Objects;
+
+import static sindarin.peepingcreepers.ai.CreeperDecisionHelper.*;
 
 @Mixin(CreeperIgniteGoal.class)
 public class CreeperIgniteMixin {
@@ -28,6 +33,12 @@ public class CreeperIgniteMixin {
         //Always continue when already exploding, but never when no target
         if (peeper.getFuseSpeed() > 0) {cir.setReturnValue(true); return; }
         if (seer == null) {cir.setReturnValue(false); return; }
+
+        // If world has spawn protection at the position of the creeper, don't explode.
+        if (Peepingcreepers.CONFIG.protectSpawn && peeper.world instanceof ServerWorld serverWorld
+                && isInSpawnProtection(serverWorld, peeper.getBlockPos())) {
+            cir.setReturnValue(false); return;
+        }
 
         //If method thinks creeper can start, think again
         if (Peepingcreepers.CONFIG.stalking && cir.getReturnValue()) {

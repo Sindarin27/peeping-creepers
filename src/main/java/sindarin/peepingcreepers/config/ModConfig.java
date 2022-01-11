@@ -19,4 +19,6 @@ public class ModConfig implements ConfigData {
     public boolean breaching = true;
     @Comment("Whether creepers should have xray vision (recommended to keep on true for breaching)")
     public boolean xray = true;
+    @Comment("Whether creepers should be blocked from exploding when within spawn protection on servers")
+    public boolean protectSpawn = false;
 }
