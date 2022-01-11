@@ -17,7 +17,9 @@ import sindarin.peepingcreepers.ai.XrayFollowTargetGoal;
 public class CreeperEntityMixin {
     @Redirect(at=@At(value = "NEW", target="net/minecraft/entity/ai/goal/ActiveTargetGoal"), method= "initGoals()V")
     private ActiveTargetGoal createFollowGoal(MobEntity creeper, Class targetClass, boolean checkVisibility) {
-        return Peepingcreepers.CONFIG.xray ? new XrayFollowTargetGoal(creeper, targetClass, false) : new ActiveTargetGoal(creeper, targetClass, true);
+        return Peepingcreepers.CONFIG.xrayStartTargeting
+                ? new XrayFollowTargetGoal(creeper, targetClass, !Peepingcreepers.CONFIG.xrayFollowTarget)
+                : new ActiveTargetGoal(creeper, targetClass, !Peepingcreepers.CONFIG.xrayFollowTarget);
     }
 
     @Inject(method="createCreeperAttributes", at=@At(value="RETURN"))
